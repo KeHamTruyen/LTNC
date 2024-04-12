@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management System</title>
+</head>
+<body>
+    <h1>Danh sách thuốc</h1>
+
+    <ul class="medicine-list">
+        <li class="medicine-item" data-id="1">
+            <img class="medicine-image" src="./Image/para.jpg" alt="">
+            <div class="medicine-details">
+                <div class="medicine-name">Paracenadol</div>
+                <div class="medicine-info">
+                    <div class="medicine-quantity">Số lượng: <span class="quantity" data-id="1">0</span></div>
+                    <div class="medicine-expiration">Hạn sử dụng: <span class="expiration" data-id="1">2024-04-30</span></div>
+                </div>
+            </div>
+            <div class="quantity-container">
+                <button class="quantity-button" onclick="increaseQuantity(1)">Nhập</button>
+                <button class="quantity-button" onclick="decreaseQuantity(1)">Xuất</button>
+            </div>
+        </li>
+        <!-- -------------------------------------------- -->
+        <li class="medicine-item" data-id="2">
+            <img class="medicine-image" src="./Image/Panadol.jpg" alt="">
+            <div class="medicine-details">
+                <div class="medicine-name">Panadol</div>
+                <div class="medicine-info">
+                    <div class="medicine-quantity">Số lượng: <span class="quantity" data-id="2">0</span></div>
+                    <div class="medicine-expiration">Hạn sử dụng: <span class="expiration" data-id="2">2024-05-15</span></div>
+                </div>
+            </div>
+            <div class="quantity-container">
+                <button class="quantity-button" onclick="increaseQuantity(2)">Nhập</button>
+                <button class="quantity-button" onclick="decreaseQuantity(2)">Xuất</button>
+            </div>
+        </li>
+        <!-- -------------------------------------------- -->
+    </ul>
+    
+  
+    
+    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js"></script>
+    <script src="script.js"></script>
+</body>
+
+
+</html>

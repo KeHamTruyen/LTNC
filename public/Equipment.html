@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cập nhật thông tin thiết bị</title>
+<link rel="stylesheet" href="styles.css"> <!-- Nếu có file CSS riêng -->
+</head>
+<body>
+
+<table id="deviceTable">
+    <thead>
+        <tr>
+            <th>Tên Thiết bị</th>
+            <th>Trạng thái</th>
+            <th>Lịch sử Bảo dưỡng</th>
+            <th>Sẵn có</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Thiết bị 1</td>
+            <td>Hoạt động</td>
+            <td>2024-04-12</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>Thiết bị 2</td>
+            <td>Không hoạt động</td>
+            <td>2024-04-12</td>
+            <td>1</td>
+        </tr>
+    </tbody>
+</table>
+
+<div id="editForm" style="display: none;">
+  <label for="editDeviceName">Chọn tên thiết bị:</label>
+  <select id="editDeviceName">
+    <!-- Tùy chọn sẽ được thêm vào đây thông qua mã JavaScript -->
+  </select>
+  <br>
+  <label for="editDeviceStatus">Trạng thái:</label>
+  <select id="editDeviceStatus">
+    <option value="Hoạt động">Hoạt động</option>
+    <option value="Không hoạt động">Không hoạt động</option>
+  </select>
+  <br>
+  <label for="editQuantity">Số lượng:</label>
+  <input type="number" id="editQuantity" value="1">
+  <button onclick="confirmEdit()">Xác nhận</button>
+  <button onclick="cancelEdit()">Hủy</button> <!-- Nút Hủy -->
+</div>
+
+<div id="editDate" style="display: none;">
+  <label for="editDateDeviceName">Chọn tên thiết bị:</label>
+  <select id="editDateDeviceName">
+    <!-- Tùy chọn sẽ được thêm vào đây thông qua mã JavaScript -->
+  </select>
+  <br>
+  <label for="editMaintenanceDate">Ngày bảo trì:</label>
+  <input type="date" id="editMaintenanceDate">
+  <br>
+  <button onclick="confirmDate()">Xác nhận</button>
+  <button onclick="cancelEditDate()">Hủy</button> <!-- Nút Hủy -->
+</div>
+
+<button onclick="showEditDateForm()">Chỉnh sửa ngày bảo trì</button>
+<button onclick="showEditForm()">Chỉnh sửa thông tin thiết bị</button>
+
+<script>
+const deviceTable = document.getElementById("deviceTable");
+const editForm = document.getElementById("editForm");
+const editDate = document.getElementById("editDate");
+const editDeviceNameSelect = document.getElementById("editDeviceName");
+const editDateDeviceNameSelect = document.getElementById("editDateDeviceName");
+const editDeviceStatus = document.getElementById("editDeviceStatus");
+const editQuantity = document.getElementById("editQuantity");
+const editMaintenanceDateInput = document.getElementById("editMaintenanceDate");
+
+function populateDeviceNames() {
+  // Xóa tất cả các tùy chọn hiện có trong danh sách
+  editDeviceNameSelect.innerHTML = "";
+  editDateDeviceNameSelect.innerHTML = "";
+
+  const rows = deviceTable.querySelectorAll("tbody tr");
+
+  rows.forEach((row) => {
+    const deviceName = row.querySelector("td:first-child").textContent;
+    
+    // Thêm tùy chọn vào cả hai dropdown
+    const option1 = document.createElement("option");
+    option1.text = deviceName;
+    option1.value = deviceName;
+    editDeviceNameSelect.appendChild(option1);
+
+    const option2 = document.createElement("option");
+    option2.text = deviceName;
+    option2.value = deviceName;
+    editDateDeviceNameSelect.appendChild(option2);
+  });
+}
+
+function showEditForm() {
+  populateDeviceNames();
+  editForm.style.display = "block";
+}
+
+function showEditDateForm() {
+  populateDeviceNames();
+  editDate.style.display = "block";
+}
+
+function confirmEdit() {
+  const selectedDeviceName = editDeviceNameSelect.value;
+  const selectedDeviceStatus = editDeviceStatus.value;
+  const selectedQuantity = editQuantity.value;
+
+  const rowIndex = findRowIndex(selectedDeviceName);
+  if (rowIndex !== -1) {
+    const row = deviceTable.rows[rowIndex + 1]; // rowIndex + 1 để bỏ qua hàng đầu tiên (tiêu đề)
+    row.cells[1].textContent = selectedDeviceStatus; // Cập nhật trạng thái
+    row.cells[3].textContent = selectedQuantity; // Cập nhật số lượng
+    alert("Đã cập nhật thông tin thiết bị!");
+    editForm.style.display = "none"; // Ẩn form chỉnh sửa sau khi hoàn thành
+  } else {
+    alert("Không tìm thấy thiết bị với tên đã chọn.");
+  }
+}
+
+function confirmDate() {
+  const selectedDeviceName = editDateDeviceNameSelect.value;
+  const selectedMaintenanceDate = editMaintenanceDateInput.value;
+
+  const rowIndex = findRowIndex(selectedDeviceName);
+  if (rowIndex !== -1) {
+    const row = deviceTable.rows[rowIndex + 1]; // rowIndex + 
+    if (selectedMaintenanceDate !== "") {
+      row.cells[2].textContent = selectedMaintenanceDate; // Cập nhật ngày bảo dưỡng nếu đã chọn
+      alert("Đã cập nhật thông tin thiết bị!");
+    } else {
+      alert("Không cập nhật ngày bảo dưỡng.");
+    }
+    editDate.style.display = "none"; // Ẩn form chỉnh sửa sau khi hoàn thành
+  } else {
+    alert("Không tìm thấy thiết bị với tên đã chọn.");
+  }
+}
+
+function cancelEdit() {
+  editForm.style.display = "none"; // Ẩn form chỉnh sửa khi hủy
+}
+
+function cancelEditDate() {
+  editDate.style.display = "none"; // Ẩn form chỉnh sửa khi hủy
+}
+
+function findRowIndex(deviceName) {
+  const rows = deviceTable.querySelectorAll("tbody tr");
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const name = row.querySelector("td:first-child").textContent;
+
+    if (name === deviceName) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+</script>
+
+
+
+</body>
+</html>
