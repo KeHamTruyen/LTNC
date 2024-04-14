@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cập nhật thông tin thiết bị</title>
-<link rel="stylesheet" href="styles.css"> <!-- Nếu có file CSS riêng -->
 </head>
 <body>
 
@@ -30,6 +29,24 @@
             <td>2024-04-12</td>
             <td>1</td>
         </tr>
+        <tr>
+          <td>Thiết bị 3</td>
+          <td>Hoạt động</td>
+          <td>2024-04-12</td>
+          <td>1</td>
+      </tr>
+      <tr>
+          <td>Thiết bị 4</td>
+          <td>Không hoạt động</td>
+          <td>2024-04-12</td>
+          <td>1</td>
+      </tr>
+      <tr>
+        <td>Thiết bị 5</td>
+        <td>Hoạt động</td>
+        <td>2024-04-12</td>
+        <td>1</td>
+    </tr>
     </tbody>
 </table>
 
@@ -66,8 +83,34 @@
 
 <button onclick="showEditDateForm()">Chỉnh sửa ngày bảo trì</button>
 <button onclick="showEditForm()">Chỉnh sửa thông tin thiết bị</button>
-
+<script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-database.js"></script>
 <script>
+
+  //------------------------------------------------------------------------------------//
+// Initialize Firebase
+
+ 
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAd4_Np45sRl5uPdciyOrF3U6xT62gnzUQ",
+    authDomain: "ltnc-3a24c.firebaseapp.com",
+    databaseURL: "https://ltnc-3a24c-default-rtdb.firebaseio.com",
+    projectId: "ltnc-3a24c",
+    storageBucket: "ltnc-3a24c.appspot.com",
+    messagingSenderId: "1094416536083",
+    appId: "1:1094416536083:web:6b93941974081ac898a5e6",
+    measurementId: "G-05YGQ7YMHQ"
+  };
+
+  // Initialize Firebase
+  var db=firebase.database();
+
+//--------------------------------------------------------------------------------------------------//
 const deviceTable = document.getElementById("deviceTable");
 const editForm = document.getElementById("editForm");
 const editDate = document.getElementById("editDate");
@@ -120,6 +163,9 @@ function confirmEdit() {
     const row = deviceTable.rows[rowIndex + 1]; // rowIndex + 1 để bỏ qua hàng đầu tiên (tiêu đề)
     row.cells[1].textContent = selectedDeviceStatus; // Cập nhật trạng thái
     row.cells[3].textContent = selectedQuantity; // Cập nhật số lượng
+    db.ref("/EquipmentList").update({
+      
+    })
     alert("Đã cập nhật thông tin thiết bị!");
     editForm.style.display = "none"; // Ẩn form chỉnh sửa sau khi hoàn thành
   } else {
@@ -174,3 +220,11 @@ function findRowIndex(deviceName) {
 
 </body>
 </html>
+
+
+
+
+
+
+
+
