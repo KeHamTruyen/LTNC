@@ -83,6 +83,34 @@ function updateDeviceInfo(deviceName, deviceStatus, availability, date) {
         }
     });
   }
+
+  function findDeviceInfoByPartialName(partialName) {
+    // Định vị đến nút chứa danh sách thiết bị
+    const devicesRef = elistRef;
+
+    // Tạo một truy vấn để lấy danh sách thiết bị
+    devicesRef.once('value', (snapshot) => {
+        const devices = snapshot.val();
+
+        // Duyệt qua danh sách thiết bị
+        Object.keys(devices).forEach(deviceName => {
+            // Kiểm tra xem tên của thiết bị có chứa phần của từ khóa tìm kiếm không
+            if (deviceName.toLowerCase().includes(partialName.toLowerCase())) {
+                const deviceData = devices[deviceName];
+                // Hiển thị thông tin của thiết bị nếu có khớp
+                console.log(`Thông tin của thiết bị ${deviceName}:`);
+                console.log(`- Trạng thái: ${deviceData.Status}`);
+                console.log(`- Khả dụng: ${deviceData.Availability}`);
+                console.log(`- Ngày: ${deviceData.Date}`);
+            }
+        });
+
+        // Thông báo nếu không tìm thấy bất kỳ thiết bị nào khớp với từ khóa tìm kiếm
+        console.log(`Không tìm thấy thông tin về thiết bị nào phù hợp với từ khóa tìm kiếm.`);
+    });
+}
+
+
   //------------------------------------------------------------//
   const mlistRef = firebase.database().ref("Mlist");
   function CreateMedicine(medicineName, initialQuantity, expirationDate) 
@@ -212,9 +240,43 @@ function updateDeviceInfo(deviceName, deviceStatus, availability, date) {
         }
     });
 }
+
+function findMedicineByNamePartial(medicineNamePartial) {
+    mlistRef.once('value', (snapshot) => {
+        const medicines = snapshot.val();
+        if (medicines) {
+            const foundMedicines = Object.keys(medicines).filter(medicineName => {
+                return medicineName.toLowerCase().includes(medicineNamePartial.toLowerCase());
+            });
+            if (foundMedicines.length > 0) {
+                console.log("Các thuốc được tìm thấy:");
+                foundMedicines.forEach(medicineName => {
+                    const medicineInfo = medicines[medicineName];
+                    console.log(`Tên thuốc: ${medicineName}`);
+                    console.log(`Thông tin từng batch:`);
+                    Object.keys(medicineInfo).forEach(batchId => {
+                        const batchInfo = medicineInfo[batchId];
+                        console.log(`- Batch ${batchId}:`);
+                        console.log(`  + Số lượng: ${batchInfo.quantity}`);
+                        console.log(`  + Hạn sử dụng: ${batchInfo.expirationDate}`);
+                    });
+                    console.log("--------------------------------------");
+                });
+            } else {
+                console.log("Không tìm thấy thuốc phù hợp.");
+            }
+        } else {
+            console.log("Không có dữ liệu về thuốc trong hệ thống.");
+        }
+    });
+}
+
+
+
   
-//CreateMedicine("asa","40","1005-1-1");
-exportMedicine("asa","80");
-//importMedicine("asa","40","1005-2-1");
+//CreateMedicine("paracetamol","40","1005-1-1");
+//importMedicine("paracetamol","40","1005-2-1");
 //importMedicine("asa","40","1006-1-1");
 //importMedicine("asa","40","1007-1-1");
+findMedicineByNamePartial("ra");
+findDeviceInfoByPartialName("1");

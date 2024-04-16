@@ -1,17 +1,3 @@
-import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set } from "firebase/database";
-const firebaseConfig = {
-    apiKey: "AIzaSyAd4_Np45sRl5uPdciyOrF3U6xT62gnzUQ",
-    authDomain: "ltnc-3a24c.firebaseapp.com",
-    databaseURL: "https://ltnc-3a24c-default-rtdb.firebaseio.com",
-    projectId: "ltnc-3a24c",
-    storageBucket: "ltnc-3a24c.appspot.com",
-    messagingSenderId: "1094416536083",
-    appId: "1:1094416536083:web:6b93941974081ac898a5e6",
-    measurementId: "G-05YGQ7YMHQ"
-  };
-const app=initializeApp(firebaseConfig);
-const db=getDatabase();
 
 
 
@@ -39,29 +25,7 @@ const editDeviceStatus = document.getElementById("editDeviceStatus");
 const editQuantity = document.getElementById("editQuantity");
 const editMaintenanceDateInput = document.getElementById("editMaintenanceDate");
 
-const elistRef = firebase.database().ref("/Elist" );
-
 // Hàm cập nhật thông tin thiết bị
-function updateDeviceInfo(deviceName, deviceStatus, availability, date) {
-  // Định vị đến nút của thiết bị cần cập nhật
-  const deviceRef = elistRef.child(deviceName);
-
-  // Dùng phương thức update để cập nhật dữ liệu
-  deviceRef.update({
-      Status: deviceStatus,
-      Availability: availability,
-      Date: date
-  }, (error) => {
-      if (error) {
-          console.error("Lỗi khi cập nhật thông tin thiết bị:", error);
-      } else {
-          console.log("Thông tin thiết bị đã được cập nhật thành công.");
-      }
-  });
-}
-
-updateDeviceInfo(1, Hoạt, 1, 2024);
-
 function populateDeviceNames() {
 // Xóa tất cả các tùy chọn hiện có trong danh sách
 editDeviceNameSelect.innerHTML = "";
