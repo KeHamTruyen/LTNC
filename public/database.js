@@ -43,3 +43,18 @@ addSchedule("Friday", "Shift3", 3, 5, "16:30", "20:00");
 addSchedule("Saturday", "Shift1", 3, 6, "08:00", "11:30");
 addSchedule("Saturday", "Shift2", 2, 7, "13:00", "16:30");
 addSchedule("Saturday", "Shift3", 1, 10, "16:30", "20:00");
+
+//--------------------------------------------------------------------------//
+
+CreateMedicine("paracetamol","40","2024-8-1");
+CreateMedicine("panadol","50","2024-9-1");
+CreateMedicine("VitaminC","60","2024-10-3");
+CreateMedicine("Otrivin","70","2024-11-2");
+
+//--------------------------------------------------------------//
+
+CreateDeviceInfo("Máy đo huyết áp","hoạt động","5","2024-8-1");
+CreateDeviceInfo("Máy phân tích KQXN","hoạt động","5","2024-8-1");
+CreateDeviceInfo("Máy xông mũi","hoạt động","5","2024-8-1");
+CreateDeviceInfo("Máy siêu âm","hoạt động","5","2024-8-1");
+CreateDeviceInfo("Giường bệnh","hoạt động","5","2024-8-1");

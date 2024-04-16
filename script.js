@@ -111,7 +111,9 @@ function updateDeviceInfo(deviceName, deviceStatus, availability, date) {
 }
 
 
-  //------------------------------------------------------------//
+  //------------------------------------------------------------------------------------------------------------//
+
+
   const mlistRef = firebase.database().ref("Mlist");
   function CreateMedicine(medicineName, initialQuantity, expirationDate) 
   {
@@ -133,7 +135,7 @@ function updateDeviceInfo(deviceName, deviceStatus, availability, date) {
   
   // Hàm cập nhật số lượng thuốc khi nhập kho
 
-  function importMedicine(medicineName, importQuantity, expirationDate) {
+  function importMedicine(medicineName, importQuantity, expirationDate, transactionDate) {
     mlistRef.child(medicineName).once('value', (snapshot) => {
         const medicine = snapshot.val();
         if (medicine) {
@@ -159,16 +161,33 @@ function updateDeviceInfo(deviceName, deviceStatus, availability, date) {
                 CreateMedicine(medicineName, importQuantity, expirationDate);
                 console.log(`Đã tạo batch mới cho thuốc ${medicineName} với hạn sử dụng ${expirationDate} và số lượng ${importQuantity}`);
             }
+
+            // Lưu thông tin về giao dịch nhập thuốc
+            const transactionData = {
+                action: 'import',
+                quantity: importQuantity,
+                transactionDate: transactionDate,
+                expirationDate: expirationDate
+            };
+            mlistRef.child(`${medicineName}/transactions`).push(transactionData);
         } else {
             // Nếu loại thuốc chưa tồn tại, tạo một batch mới và lưu vào
             CreateMedicine(medicineName, importQuantity, expirationDate);
             console.log(`Đã tạo batch mới cho thuốc ${medicineName} với hạn sử dụng ${expirationDate} và số lượng ${importQuantity}`);
+
+            // Lưu thông tin về giao dịch nhập thuốc
+            const transactionData = {
+                action: 'nhập',
+                quantity: importQuantity,
+                transactionDate: transactionDate,
+                expirationDate: expirationDate
+            };
+            mlistRef.child(`${medicineName}/transactions`).push(transactionData);
         }
     });
 }
 
-  // Hàm cập nhật số lượng thuốc khi xuất kho
-  function exportMedicine(medicineName, exportQuantity) {
+function exportMedicine(medicineName, exportQuantity, transactionDate) {
     mlistRef.child(medicineName).once('value', (snapshot) => {
         const medicine = snapshot.val();
         if (medicine) {
@@ -218,6 +237,14 @@ function updateDeviceInfo(deviceName, deviceStatus, availability, date) {
             if (quantityLeftToExport > 0) {
                 console.log(`Không đủ số lượng thuốc trong kho để xuất ${exportQuantity} đơn vị.`);
             }
+
+            // Lưu thông tin về giao dịch xuất thuốc
+            const transactionData = {
+                action: 'xuất',
+                quantity: exportQuantity,
+                transactionDate: transactionDate
+            };
+            mlistRef.child(`${medicineName}/transactions`).push(transactionData);
         } else {
             console.log(`Không tìm thấy thông tin về thuốc ${medicineName} trong kho.`);
         }
@@ -273,10 +300,41 @@ function findMedicineByNamePartial(medicineNamePartial) {
 
 
 
+function displayTransactionHistory() {
+    const medicinesRef = firebase.database().ref("Mlist");
+
+    // Lặp qua tất cả các loại thuốc
+    medicinesRef.once("value", (snapshot) => {
+        snapshot.forEach((medicineSnapshot) => {
+            const medicineName = medicineSnapshot.key;
+            const transactionRef = firebase.database().ref("Mlist").child(medicineName).child("transactions");
+
+            // Query transactions sorted by transactionDate in descending order
+            transactionRef.orderByChild("transactionDate").once("value", (transactionSnapshot) => {
+                console.log(`Lịch sử nhập xuất cho thuốc ${medicineName}:`);
+                transactionSnapshot.forEach((childSnapshot) => {
+                    const transaction = childSnapshot.val();
+                    console.log("Loại giao dịch:", transaction.action);
+                    console.log("Số lượng:", transaction.quantity);
+                    
+                    // Kiểm tra loại giao dịch để hiển thị thông tin hạn sử dụng chỉ khi là giao dịch nhập
+                    if (transaction.action === "nhập") {
+                        console.log("Hạn sử dụng:", transaction.expirationDate);
+                    }
+                    
+                    console.log("Ngày giao dịch:", transaction.transactionDate);
+                    console.log("------------");
+                    // Hiển thị thông tin giao dịch trên giao diện người dùng thay vì log ra console
+                });
+            });
+        });
+    });
+}
+
+
   
 //CreateMedicine("paracetamol","40","1005-1-1");
-//importMedicine("paracetamol","40","1005-2-1");
-//importMedicine("asa","40","1006-1-1");
+
+displayTransactionHistory();
+
 //importMedicine("asa","40","1007-1-1");
-findMedicineByNamePartial("ra");
-findDeviceInfoByPartialName("1");
