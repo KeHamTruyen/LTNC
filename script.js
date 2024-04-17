@@ -335,6 +335,6 @@ function displayTransactionHistory() {
   
 //CreateMedicine("paracetamol","40","1005-1-1");
 
-displayTransactionHistory();
 
-//importMedicine("asa","40","1007-1-1");
+
+importMedicine("asa","40","2000-1-1","2004-1-1");
