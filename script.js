@@ -95,46 +95,46 @@ function updateDeviceInfo(deviceName, deviceStatus, availability, date) {
     });
   }
 
-  function findDeviceInfoByPartialName(partialName) {
-    // Định vị đến nút chứa danh sách thiết bị
-    const devicesRef = elistRef;
+  async function findDeviceInfoByPartialName(partialName) {
+    try {
+        const devicesRef = elistRef;
+        const devicesSnapshot = await devicesRef.once('value');
+        const matchingDevices = [];
 
-    // Tạo một truy vấn để lấy danh sách thiết bị
-    devicesRef.once('value', (snapshot) => {
-        const devices = snapshot.val();
-
-        // Duyệt qua danh sách thiết bị
-        Object.keys(devices).forEach(deviceName => {
-            // Kiểm tra xem tên của thiết bị có chứa phần của từ khóa tìm kiếm không
+        devicesSnapshot.forEach(childSnapshot => {
+            const deviceName = childSnapshot.key;
+            const deviceData = childSnapshot.val();
             if (deviceName.toLowerCase().includes(partialName.toLowerCase())) {
-                const deviceData = devices[deviceName];
-                // Hiển thị thông tin của thiết bị nếu có khớp
-                console.log(`Thông tin của thiết bị ${deviceName}:`);
-                console.log(`- Trạng thái: ${deviceData.Status}`);
-                console.log(`- Khả dụng: ${deviceData.Availability}`);
-                console.log(`- Ngày: ${deviceData.Date}`);
+                matchingDevices.push({ name: deviceName, data: deviceData });
             }
         });
 
-        // Thông báo nếu không tìm thấy bất kỳ thiết bị nào khớp với từ khóa tìm kiếm
-        console.log(`Không tìm thấy thông tin về thiết bị nào phù hợp với từ khóa tìm kiếm.`);
-    });
+        if (matchingDevices.length > 0) {
+            return matchingDevices;
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error("Lỗi khi tìm thiết bị theo tên:", error);
+        return null;
+    }
 }
 
-function FindDeviceByID(deviceID) {
-    // Định vị đến nút của thiết bị cần tìm
-    const deviceRef = elistRef.orderByChild("ID").equalTo(deviceID);
+async function FindDeviceByID(deviceID) {
+    try {
+        const deviceRef = elistRef.orderByChild("ID").equalTo(deviceID);
+        const snapshot = await deviceRef.once('value');
 
-    // Lắng nghe sự kiện một lần (once) để lấy dữ liệu
-    deviceRef.once('value', (snapshot) => {
         if (snapshot.exists()) {
-            // Lấy thông tin của thiết bị từ snapshot
             const deviceData = snapshot.val();
-            console.log("Thông tin thiết bị:", deviceData);
+            return deviceData;
         } else {
-            console.log("Không tìm thấy thiết bị có ID:", deviceID);
+            return null;
         }
-    });
+    } catch (error) {
+        console.error("Lỗi khi tìm thiết bị theo ID:", error);
+        return null;
+    }
 }
 
 
@@ -364,4 +364,4 @@ function displayTransactionHistory() {
 
 
 
-FindDeviceByID(2);
+
