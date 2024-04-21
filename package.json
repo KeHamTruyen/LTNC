@@ -1,6 +1,15 @@
 {
   "dependencies": {
-    "firebase": "^8.9.1",
+    "firebase": "^8.10.1",
     "firebase-admin": "^12.0.0"
-  }
+  },
+  "name": "ltnc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Equipment.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
 }

@@ -23,30 +23,41 @@ admin.initializeApp();
 
 const elistRef = firebase.database().ref("/Elist" );
 
+let id = 0;
+const idRef = elistRef.child("id");
 function CreateDeviceInfo(deviceName, initialStatus, initialAvailability, initialDate) {
     // Định vị đến nút của thiết bị cần khởi tạo thông tin
     const deviceRef = elistRef.child(deviceName);
 
-    // Kiểm tra xem thiết bị đã tồn tại trong cơ sở dữ liệu chưa
-    deviceRef.once('value', (snapshot) => {
-        const deviceExists = snapshot.exists();
+    // Lấy giá trị id từ cơ sở dữ liệu
+    idRef.once('value', (snapshot) => {
+        id = snapshot.val() || 0; // Sử dụng giá trị id hiện có hoặc 0 nếu không có
+        id++; // Tăng giá trị id lên cho thiết bị mới
+        // Cập nhật giá trị id trong cơ sở dữ liệu
+        idRef.set(id);
+        
+        // Kiểm tra xem thiết bị đã tồn tại trong cơ sở dữ liệu chưa
+        deviceRef.once('value', (snapshot) => {
+            const deviceExists = snapshot.exists();
 
-        // Nếu thiết bị chưa tồn tại, thêm thông tin vào
-        if (!deviceExists) {
-            deviceRef.set({
-                Status: initialStatus,
-                Availability: initialAvailability,
-                Date: initialDate
-            }, (error) => {
-                if (error) {
-                    console.error("Lỗi khi khởi tạo thông tin thiết bị:", error);
-                } else {
-                    console.log("Thông tin thiết bị đã được khởi tạo thành công.");
-                }
-            });
-        } else {
-            console.log("Thiết bị đã tồn tại trong cơ sở dữ liệu.");
-        }
+            // Nếu thiết bị chưa tồn tại, thêm thông tin vào
+            if (!deviceExists) {
+                deviceRef.set({
+                    ID: +id,
+                    Status: initialStatus,
+                    Availability: initialAvailability,
+                    Date: initialDate
+                }, (error) => {
+                    if (error) {
+                        console.error("Lỗi khi khởi tạo thông tin thiết bị:", error);
+                    } else {
+                        console.log("Thông tin thiết bị đã được khởi tạo thành công.");
+                    }
+                });
+            } else {
+                console.log("Thiết bị đã tồn tại trong cơ sở dữ liệu.");
+            }
+        });
     });
 }
 
@@ -107,6 +118,22 @@ function updateDeviceInfo(deviceName, deviceStatus, availability, date) {
 
         // Thông báo nếu không tìm thấy bất kỳ thiết bị nào khớp với từ khóa tìm kiếm
         console.log(`Không tìm thấy thông tin về thiết bị nào phù hợp với từ khóa tìm kiếm.`);
+    });
+}
+
+function FindDeviceByID(deviceID) {
+    // Định vị đến nút của thiết bị cần tìm
+    const deviceRef = elistRef.orderByChild("ID").equalTo(deviceID);
+
+    // Lắng nghe sự kiện một lần (once) để lấy dữ liệu
+    deviceRef.once('value', (snapshot) => {
+        if (snapshot.exists()) {
+            // Lấy thông tin của thiết bị từ snapshot
+            const deviceData = snapshot.val();
+            console.log("Thông tin thiết bị:", deviceData);
+        } else {
+            console.log("Không tìm thấy thiết bị có ID:", deviceID);
+        }
     });
 }
 
@@ -333,8 +360,8 @@ function displayTransactionHistory() {
 
 
   
-//CreateMedicine("paracetamol","40","1005-1-1");
 
 
 
-importMedicine("asa","40","2000-1-1","2004-1-1");
+
+FindDeviceByID(2);
